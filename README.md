@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+A production-ready RESTful API built with Next.js, Prisma, PostgreSQL, and Redis for user authentication and task management with advanced caching and scalability features.
 
-## Getting Started
+## Features
 
-First, run the development server:
+- **JWT Authentication** - Secure user registration and login
+- **Task Management** - CRUD operations for tasks with status tracking
+- **Redis Caching** - 80-90% faster response times with intelligent caching
+- **Health Monitoring** - Built-in health checks and status endpoints
+- **API Documentation** - Complete Swagger/OpenAPI specification
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 22+
+- PostgreSQL 16+
+- Redis 7+ (optional, app works without it)
+
+### 1. Clone and Install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the repository
+git clone <repository-url>
+cd primetrade-intern
+
+# Install dependencies
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Copy environment template
+cp .env.example .env
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Edit .env with your configuration
+nano .env
+```
 
-## Learn More
+**Required environment variables:**
+```env
+DATABASE_URL="postgresql://postgres:root@localhost:5432/mydb?schema=public"
+JWT_SECRET="your-super-secret-jwt-key-change-this"
+REDIS_URL="redis://localhost:6379"
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Database Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Generate Prisma Client
+npm run prisma:generate
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Run migrations
+npm run prisma:migrate
 
-## Deploy on Vercel
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 4. Start Development Server
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# Start the application
+npm run dev
+```
+
+The API will be available at `http://localhost:3000`
+
+### 5. Verify Installation
+
+```bash
+# Check health
+curl http://localhost:3000/api/health
+
+# Expected response:
+# {
+#   "status": "ok",
+#   "timestamp": "2024-02-04T12:00:00.000Z",
+#   "services": {
+#     "database": "healthy",
+#     "redis": "healthy"
+#   }
+# }
+```

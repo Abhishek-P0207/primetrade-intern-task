@@ -13,3 +13,5 @@
 - Cache invalidation uses cache-aside pattern for reads and write-through pattern for updates to maintain data consistency.
 
 - Health monitoring endpoints track PostgreSQL and Redis status with structured logging and Prometheus metrics for observability.
+
+- Microservices helps to add more modules, depending on the need, as each of the modules is loosely bound, thus improving customizability and security
