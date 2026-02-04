@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/middleware';
 import { prisma } from '@/lib/prisma';
+import {
+  getCachedTask,
+  setCachedTask,
+  invalidateTaskCache,
+} from '@/lib/cache';
 
 // GET /api/tasks/[id] - Get a specific task
 export const GET = requireAuth(
@@ -8,6 +13,22 @@ export const GET = requireAuth(
     try {
       const { id } = await params;
 
+      // Try cache first
+      const cachedTask = await getCachedTask(id);
+      if (cachedTask) {
+        // Verify ownership
+        if (cachedTask.userId !== user.userId) {
+          return NextResponse.json(
+            { error: 'Unauthorized' },
+            { status: 403 }
+          );
+        }
+        console.log('Cache hit: task', id);
+        return NextResponse.json({ task: cachedTask, cached: true });
+      }
+
+      // Fallback to database
+      console.log('Cache miss: fetching task from database');
       const task = await prisma.task.findUnique({
         where: { id },
       });
@@ -26,7 +47,10 @@ export const GET = requireAuth(
         );
       }
 
-      return NextResponse.json({ task });
+      // Cache for next time
+      await setCachedTask(id, task);
+
+      return NextResponse.json({ task, cached: false });
     } catch (error) {
       console.error('Get task error:', error);
       return NextResponse.json(
@@ -72,6 +96,9 @@ export const PATCH = requireAuth(
         },
       });
 
+      // Invalidate cache for this task and user's task list
+      await invalidateTaskCache(id, user.userId);
+
       return NextResponse.json({ task: updatedTask });
     } catch (error) {
       console.error('Update task error:', error);
@@ -110,6 +137,9 @@ export const DELETE = requireAuth(
       await prisma.task.delete({
         where: { id },
       });
+
+      // Invalidate cache for this task and user's task list
+      await invalidateTaskCache(id, user.userId);
 
       return NextResponse.json({ message: 'Task deleted successfully' });
     } catch (error) {
