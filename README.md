@@ -4,6 +4,7 @@ A production-ready RESTful API built with Next.js, Prisma, PostgreSQL, and Redis
 
 - **JWT Authentication** - Secure user registration and login
 - **Task Management** - CRUD operations for tasks with status tracking
+- **Admin User Management** - Complete user administration and monitoring
 - **Redis Caching** - 80-90% faster response times with intelligent caching
 - **Health Monitoring** - Built-in health checks and status endpoints
 - **API Documentation** - Complete Swagger/OpenAPI specification
@@ -65,6 +66,7 @@ npm run dev
 ```
 
 The API will be available at `http://localhost:3000`
+In the admin account, the admin dashboard will be available ar `http://localhost:3000/admin`
 
 ### 5. Verify Installation
 
